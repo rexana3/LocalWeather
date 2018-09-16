@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+		<title></title>
+		<script src="jquery.min.js"></script>
+	</head>
+
+	<body>
+		<select id="adress">
+			<option>北京</option>
+			<option>湛江</option>
+			<option>潮州</option>
+			<option>中山</option>
+			<option>上海</option>
+			<option>天津</option>
+			<option>重庆</option>
+			<option>哈尔滨</option>
+			<option>石家庄</option>
+			<option>太原</option>
+			<option>西安</option>
+			<option>济南</option>
+			<option>郑州</option>
+			<option>沈阳</option>
+			<option>长春</option>
+			<option>南京</option>
+			<option>杭州</option>
+			<option>合肥</option>
+			<option>南昌</option>
+			<option>福州</option>
+			<option>武汉</option>
+			<option>长沙</option>
+			<option>成都</option>
+			<option>贵阳</option>
+			<option>昆明</option>
+			<option>广州</option>
+			<option>海口</option>
+			<option>兰州</option>
+			<option>西宁</option>
+			<option>台北</option>
+			<option>呼和浩特</option>
+			<option>乌鲁木齐</option>
+			<option>拉萨</option>
+			<option>南宁</option>
+			<option>银川</option>
+			<option>香港</option>
+			<option>澳门</option>
+		</select>
+		<h2 id="title2">— —今天天气</h2>
+		<div id="today">
+			<ul id="today_weather">
+				<li>温度：</li>
+				<li>湿度：</li>
+				<li>风向：</li>
+				<li>天气：</li>
+			</ul>
+			<ul id="totay_life">
+				<li>穿衣指数：</li>
+				<li>锻炼指数：</li>
+				<li>洗车指数：</li>
+				<li>旅游指数：</li>
+				<li>紫外线指数：</li>
+			</ul>
+		</div>
+		<div id="life">
+			<img id="life_img" src="" />
+			<div class="box" id="box_0"></div>
+			<div class="box" id="box_1"></div>
+			<div class="box" id="box_2"></div>
+		</div>
+		<div id="future">
+			<h2>未来6天天气</h2>
+			<ul id="ul_0">
+				<li class="future_data"></li>
+				<li class="future_w"></li>
+				<li></li> 
+				<li></li>
+			</ul>
+			<ul id="ul_1">
+				<li class="future_data"></li>
+				<li class="future_w"></li>
+				<li></li> 
+				<li></li> 
+			</ul>
+			<ul id="ul_2">
+				<li class="future_data"></li>
+				<li class="future_w"></li>
+				<li></li> 
+				<li></li>
+			</ul>
+			<ul id="ul_3">
+				<li class="future_data"></li>
+				<li class="future_w"></li>
+				<li></li> 
+				<li></li>
+			</ul>
+			<ul id="ul_4">
+				<li class="future_data"></li>
+				<li class="future_w"></li> 
+				<li></li> 
+				<li></li>
+			</ul>
+			<ul id="ul_5">
+				<li class="future_data"></li>
+				<li class="future_w"></li> 
+				<li></li> 
+				<li></li> 
+			</ul>
+		</div>
+	</body>
+</html>
+<script>
+$(document).ready(function(){
+	attain();
+	$('#adress').change(function(){
+		attain();
+	});
+	
+	function attain(){
+		console.log()
+		var optionCity = $("#adress option:selected");
+		var city = optionCity.text();
+		var cityUrl = encodeURI(city);
+		var url = 'https://v.juhe.cn/weather/index?format=2&cityname='+cityUrl+'&key=d9eb7740d85f36c3898756bf79574d8a'
+		$.get(url,function(data){
+			if(data && data.resultcode =='200'){
+		  		//获取未来6天天气数据
+//		  		console.log(data.result.future)
+		  		for(let i=1;i<7;i++){
+		  			var temp = data.result.future[i];
+		  			var num = i-1;
+		  			var temp_id = '#ul_'+num;
+		  			$(temp_id).find('li').eq(0).text(temp.date +'---'+temp.week);
+		  			$(temp_id).find('li').eq(2).text(temp.temperature);
+		  			$(temp_id).find('li').eq(1).text(temp.weather);
+		  			$(temp_id).find('li').eq(3).text(temp.wind);
+		  		}
+		  		//获取当天天气及生活指数
+		  		var todayW_data = data.result.sk;
+		  		var todayL_data = data.result.today;
+		  		console.log(todayL_data);
+		  		$('#today_weather').find('li').eq(0).text('温度：'+todayW_data.temp+'℃');
+		  		$('#today_weather').find('li').eq(1).text('湿度：'+todayW_data.humidity);
+		  		$('#today_weather').find('li').eq(2).text('风向：'+todayW_data.wind_direction);
+		  		$('#today_weather').find('li').eq(3).text('天气：'+todayL_data.weather);
+		  		
+		  		$('#totay_life').find('li').eq(0).text('穿衣指数：'+todayL_data.dressing_index);
+		  		$('#totay_life').find('li').eq(1).text('锻炼指数：'+todayL_data.exercise_index);
+		  		$('#totay_life').find('li').eq(2).text('洗车指数：'+todayL_data.wash_index);
+		  		$('#totay_life').find('li').eq(3).text('旅游指数：'+todayL_data.travel_index);
+		  		$('#totay_life').find('li').eq(4).text('紫外线指数：'+todayL_data.uv_index);
+		  		
+		  		appearance(todayW_data.temp);
+			}
+		});		
+	}
+	
+	function appearance(tempa){
+		if(tempa>28){
+			//说明天气炎热
+			$('#life_img').attr('src',"https://github.com/rexana3/picture/blob/master/codePen/2.png?raw=true");
+			$('#box_0').text('短袖');
+			$('#box_1').text('小短裙');
+			$('#box_2').text('注意防晒');
+			
+		}else if(tempa<28 && tempa >20){
+			//天气凉爽
+			$('#life_img').attr('src',"https://github.com/rexana3/picture/blob/master/codePen/3.png?raw=true");
+			$('#box_0').text('衬衫');
+			$('#box_1').text('阔腿裤');
+			$('#box_2').text('秋高气爽');
+		}else if(tempa<20){
+			//天气寒冷
+			$('#life_img').attr('src',"https://github.com/rexana3/picture/blob/master/codePen/1.png?raw=true");
+			$('#box_0').text('毛衣');
+			$('#box_1').text('羊毛裙');
+			$('#box_2').text('当心着凉');
+		}
+	}
+});
+  
+
+</script>
+<style>
+	body{
+		position: relative;
+	}
+	#adress{
+		position: absolute;
+		width: 170px;
+		height: 70px;
+		font-size: 40px;
+		border-radius: 30px;
+		padding:  0px 0px 0px 40px;
+		margin: 0;
+		text-align: center;
+		appearance: none;
+		-webkit-appearance: none;
+        -moz-appearance: none;
+		outline: none;
+		background: #bcd68d;
+		color: white;
+		border: 1px solid #bcd68d;
+		cursor: pointer;
+		top: 10px;
+		left: 20px;
+	}
+	option{
+		text-align: center;
+		-moz-appearance:none; /* Firefox */
+		-webkit-appearance:none; /* Safari 和 Chrome */
+		appearance:none;
+		font-size: 20px;
+		background: white;
+		color: #737383;
+		
+	}
+	#title2{
+		position: absolute;
+		top:-20px;
+		left: 200px;
+		font-size: 50px;
+		font-family: 幼圆;
+		letter-spacing: 20px;
+		margin-left: 20px;
+	}
+	#today{
+		position: absolute;
+		top: 40px;
+		left: 40px;
+	}
+	#today_weather{
+		position: absolute;
+		top: 80px;
+		left: 0px;
+		width:400px;
+		font-size: 30px;
+		letter-spacing: 20px;
+	}
+	#today_weather li{
+		padding-bottom: 4px;
+	}
+	#totay_life{
+		position: absolute;
+		top: 80px;
+		left: 400px;
+		width: 500px;
+		border-left: 2px solid #3c7a03;
+		padding-left: 40px;
+		font-size: 20px;
+		letter-spacing: 3px;
+	}
+	#totay_life li{
+		padding-bottom: 14px;
+	}
+	#life{
+		position: absolute;
+		left: 850px;
+	}
+	#future{
+		position: absolute;
+		top: 380px;
+		left: 1px;
+	}
+	li{
+		list-style: none;
+	}
+	ul{
+		display: inline-block;
+		margin: 0px 0px;
+		padding: 0px 0px;
+	}
+	.future_data{
+		padding: 4px 4px 4px 4px;
+		background: #bcd68d;
+	}
+	.future_w{
+		font-size: 30px;
+		padding: 10px 4px 10px 4px;
+	}
+	#future ul{
+		width: 210px;
+		height: 150px;
+		margin-left: 3px;
+		border-radius: 5px;
+		border: 1px solid #577909;
+	}
+	#future ul li{
+		text-align: center;
+	}
+	.box{
+		width: 100px;
+		height: 30px;
+		border-radius: 30px;
+		background:#bcd68d;
+		color: white;
+		position: absolute;
+		text-align: center;
+		line-height: 30px;
+		box-shadow:0px 4px 4px #c8c8c8;
+		transition: width 1s,height 1s;
+		-moz-transition: width 1s, height 1s,-moz-transform 2s;
+		-webkit-transition: width 1s,height 1s,-webkit-transform 2s;
+		-moz-transition: width 2s,height 2s,-o-transform 2s; 
+	}
+	.box:hover{
+		transform: rotate(360deg);
+	}
+	#box_0{
+		top:200px;
+		left: 0px;
+	}
+	#box_1{
+		top: 350px;
+		left: 200px;
+	}
+	#box_2{
+		top: 50px;
+		left: 250px;
+	}
+</style>
